@@ -1,0 +1,26 @@
+clc;    
+clear;
+img=imread('C:\Users\DELL\Desktop\DIPhw\hw7\test6.jpg');  //边缘检测
+% img=img(:,:,1);
+edge_image1=edge(img,'Sobel');
+edge_image2=edge(img,'log');
+figure;
+subplot(131);imshow(img);
+subplot(132);imshow(edge_image1);title('Sobel边缘检测');
+subplot(133);imshow(edge_image2);title('Canny边缘检测');
+
+
+function lines=line_detection(img,method,resolution) //直线检测，img为输入图像，method为边缘算法，resolution为ρ和θ的步长
+BW = edge(img,method);
+[H,T,R] = hough(BW,'RhoResolution',resolution,'ThetaResolution',resolution);
+P  = houghpeaks(H,520,'threshold',ceil(0.6*max(H(:))));
+lines = houghlines(BW,T,R,P,'FillGap',5,'MinLength',2);
+figure, 
+subplot(121);imshow(BW);
+subplot(122);
+imshow(img), hold on
+for k = 1:length(lines)
+   xy = [lines(k).point1; lines(k).point2];
+   plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+end
+end
